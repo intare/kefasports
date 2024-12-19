@@ -17,8 +17,7 @@ export function WhoAreWeContent() {
     <div className="container py-16">
       <div className="mx-auto max-w-4xl space-y-8">
         <h3 className="text-xl font-medium">
-          SMC2 is a specialist international design & build company headquartered near to Lyon in
-          France with offices in Frankfurt, London and Montreal.
+          KefaSports is a specialist international design & build company headquartered to Omega House, Ground Floor, KN 3 ave, Kiyovu, Kigali, Rwanda.
         </h3>
         
         <div className="grid gap-8 md:grid-cols-2">

@@ -13,7 +13,7 @@ export function WhoAreWeHero() {
       <div className="container relative z-10 flex h-full flex-col justify-center">
         <div className="space-y-4">
           <div className="space-y-1">
-            <p className="text-sm font-medium text-primary">SMC2 > WHO ARE WE ?</p>
+            <p className="text-sm font-medium text-primary">WHO ARE WE ?</p>
             <h1 className="text-4xl font-bold text-white sm:text-5xl">WHO ARE WE ?</h1>
           </div>
           <h2 className="text-5xl font-bold text-white sm:text-6xl md:text-7xl">

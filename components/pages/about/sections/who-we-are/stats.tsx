@@ -3,24 +3,24 @@ import { Building, Globe, Users, ChartBar, Layout, Ruler } from "lucide-react"
 const stats = [
   {
     icon: Building,
-    title: "FOUNDED IN 2003",
+    title: "FOUNDED IN 2016",
     value: "",
   },
   {
     icon: Globe,
-    title: "6 OFFICES IN FRANCE",
-    subtitle: "GERMANY, UNITED KINGDOM, NORTH AMERICA",
+    title: "6 OFFICES IN Kigali",
+    subtitle: "KIGALI RWANDA, SOUTH SUDAN",
     value: "3 SATELITE COMPANIES",
   },
   {
     icon: ChartBar,
     title: "IN SALES REVENUES",
-    value: "> 30 M€",
+    value: "Over 30 B",
   },
   {
     icon: Users,
     title: "EMPLOYEES",
-    value: "> DE 80",
+    value: ">  80",
   },
   {
     icon: Layout,

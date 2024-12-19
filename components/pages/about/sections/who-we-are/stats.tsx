@@ -38,7 +38,7 @@ export function WhoAreWeStats() {
   return (
     <div className="bg-primary py-24">
       <div className="container">
-        <h2 className="text-center text-3xl font-bold text-white">SMC2 IN NUMBERS</h2>
+        <h2 className="text-center text-3xl font-bold text-white">KefaSports IN NUMBERS</h2>
         
         <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {stats.map((stat) => (

@@ -1,4 +1,4 @@
-import { Building, Globe, Users,  Layout, Ruler } from "lucide-react"
+import { Building, Globe, Users, BarChart, Layout, Ruler } from "lucide-react"
 
 const stats = [
   {
@@ -11,6 +11,11 @@ const stats = [
     title: "6 OFFICES IN Kigali",
     subtitle: "KIGALI RWANDA, SOUTH SUDAN",
     value: "3 SATELITE COMPANIES",
+  }, 
+  {
+    icon: BarChart,
+    title: "EMPLOYEES",
+    value: ">  80",
   },
  
   {

@@ -1,0 +1,282 @@
+@import "tailwindcss";
+@import "../styles/image-fixes.css";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
+body {
+   background-color: #fff;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  color: #171717;
+  font-family: 'Roboto',sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 12px;
+  line-height: 140%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100%;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Ensure sticky header works properly */
+header.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 50;
+}
+
+/* Header visibility and styling */
+header {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Ensure header is always above hero slider */
+header {
+  z-index: 100 !important;
+}
+
+/* Add smooth scrolling */
+.scroll-smooth {
+  scroll-behavior: smooth;
+}
+
+/* Hero Slider Styles */
+.full-width-animated-hero {
+    background-color: #f2efec;
+}
+
+.full-width-animated-hero__container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 68px);
+    justify-content: space-between;
+    max-height: 690px;
+    max-width: 1800px;
+    padding: 0;
+    width: auto;
+}
+
+@media only screen and (min-width: 1100px) {
+    .full-width-animated-hero__container {
+        height: calc(100vh - 90px);
+        max-height: unset;
+    }
+}
+
+.full-width-animated-hero__slider {
+    flex-grow: 1;
+    height: 100vh;
+    max-height: unset;
+    width: auto;
+}
+
+@media only screen and (min-width: 1100px) {
+    .full-width-animated-hero__slider {
+        height: 59vw;
+        padding: 0 5%;
+    }
+}
+
+.full-width-animated-hero__item {
+    background-color: #f2efec;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: 270px 1fr;
+}
+
+@media only screen and (min-width: 1100px) {
+    .full-width-animated-hero__item {
+        grid-gap: 30px;
+        grid-template-rows: 1fr;
+    }
+}
+
+.full-width-animated-hero__item-text {
+    background-color: unset;
+    bottom: unset;
+    display: flex;
+    flex-direction: column;
+    grid-column: 1 / span 12;
+    grid-row: 1;
+    justify-content: center;
+    left: unset;
+    padding: 32px 5%;
+    position: relative;
+    transform: translate(0, 0);
+    width: auto;
+}
+
+@media only screen and (min-width: 1100px) {
+    .full-width-animated-hero__item-text {
+        grid-column: 1 / span 4;
+        min-height: unset;
+        min-width: 180px;
+        padding: 0 48px 0 5vw;
+    }
+}
+
+.full-width-animated-hero__item-text:before {
+    background: #2a73d9;
+    content: "";
+    height: 100%;
+    position: absolute;
+    right: 200%;
+    opacity: 0;
+    top: 0;
+    width: calc(100% + 50vw);
+    transition: background 0.75s cubic-bezier(0.19, 1, 0.22, 1),
+                opacity 0.75s cubic-bezier(0.19, 1, 0.22, 1),
+                right 1s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.full-width-animated-hero__item-text.bg-darker-green:before {
+    background: #1a845c;
+}
+
+.full-width-animated-hero__item-text.bg-turmeric:before {
+    background: #f3be0a;
+}
+
+.full-width-animated-hero__item-text.bg-stantec-orange:before {
+    background: #ed6631;
+}
+
+.full-width-animated-hero__item-text.bg-himalayan-salt:before {
+    background: #f4b5b5;
+}
+
+.full-width-animated-hero__item-text.bg-black:before {
+    background: #000;
+}
+
+/* Animation States */
+.full-width-animated-hero__item--current {
+    opacity: 1;
+    transition-delay: 0;
+    z-index: 3;
+}
+
+.full-width-animated-hero__item--current .full-width-animated-hero__item-text::before {
+    opacity: 1;
+    right: 0;
+    transition-delay: 0.75s;
+}
+
+.full-width-animated-hero__item--current .full-width-animated-hero__description-link {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 1s;
+    transition-duration: 0.75s;
+    transition-timing-function: ease-out;
+}
+
+.full-width-animated-hero__item--prev,
+.full-width-animated-hero__item--next {
+    opacity: 0;
+    top: 0;
+    transition-delay: 1s;
+    z-index: 2;
+}
+
+/* Media wrapper */
+.full-width-animated-hero__item-media-wrapper {
+    border-radius: 0 0 80px 0;
+    grid-column: 1 / span 12;
+    grid-row: 2;
+    overflow: hidden;
+    position: relative;
+    transform: translate(0, 0);
+}
+
+@media only screen and (min-width: 1100px) {
+    .full-width-animated-hero__item-media-wrapper {
+        border-radius: 0 0 160px 0;
+        grid-row: 1;
+        grid-column: 5 / span 8;
+    }
+}
+
+.full-width-animated-hero__item-media {
+    height: 100%;
+    object-fit: cover;
+    position: relative;
+    width: 100%;
+}
+
+/* Typography */
+.full-width-animated-hero__eyebrow {
+    font-family: "Roboto", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 12px;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+}
+
+.full-width-animated-hero__description {
+    font-family: "Source Serif 4", serif;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 26px;
+    color: #fff;
+    margin-bottom: 16px;
+}
+
+@media screen and (min-width: 768px) {
+    .full-width-animated-hero__description {
+        font-size: 40px;
+        line-height: 48px;
+        margin-bottom: 24px;
+    }
+}
+
+/* CTA Button */
+.full-width-animated-hero__cta {
+    background: transparent;
+    border: 2px solid #fff;
+    border-radius: 100px;
+    color: #fff;
+    cursor: pointer;
+    padding: 16px 24px;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: all 600ms ease;
+    font-family: "Roboto", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 14px;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.full-width-animated-hero__cta:hover {
+    background-color: #fff;
+    color: #000;
+}
+

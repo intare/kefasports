@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm cache clean:*)",
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(npx sanity:*)",
+      "Bash(npm run build)",
+      "Bash(npm run dev)",
+      "Bash(powershell:*)",
+      "Bash(python -c \"import os; import glob; files = glob.glob(''public/gallery/centralafrica/*No matter*''); [os.rename(f, ''public/gallery/centralafrica/tennis-court-serve.jpg'') for f in files if os.path.exists(f)]\")",
+      "Bash(git add:*)",
+      "Bash(python:*)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

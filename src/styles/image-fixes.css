@@ -1,0 +1,209 @@
+/* Header fixes */
+.header-black {
+  background-color: #000000 !important;
+  color: white !important;
+}
+
+.header-black nav a {
+  color: #d1d5db !important; /* gray-300 */
+}
+
+.header-black nav a:hover {
+  color: #ffffff !important;
+}
+
+/* Client Logos Auto-Scroll Animation */
+@keyframes scroll-horizontal {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+.animate-scroll-horizontal {
+  animation: scroll-horizontal 30s linear infinite;
+  width: calc(300%);
+}
+
+.animate-scroll-horizontal:hover {
+  animation-play-state: paused;
+}
+
+/* Image optimization and distortion fixes */
+
+/* Ensure all images maintain proper aspect ratios */
+.image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-container img {
+  object-fit: cover !important;
+  object-position: center !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Project card image fixes */
+.project-card-image {
+  aspect-ratio: 16/10;
+  position: relative;
+  overflow: hidden;
+  background-color: #f3f4f6;
+}
+
+.project-card-image img {
+  object-fit: cover !important;
+  object-position: center !important;
+  transition: transform 0.5s ease;
+}
+
+.project-card-image:hover img {
+  transform: scale(1.05);
+}
+
+/* Gallery grid image fixes */
+.gallery-item {
+  aspect-ratio: 4/3;
+  position: relative;
+  overflow: hidden;
+  background-color: #f3f4f6;
+  border-radius: 0.5rem;
+}
+
+.gallery-item img {
+  object-fit: cover !important;
+  object-position: center !important;
+  transition: transform 0.5s ease;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.05);
+}
+
+/* Featured projects image fixes */
+.featured-project-image {
+  aspect-ratio: 16/10;
+  position: relative;
+  overflow: hidden;
+  background-color: #f3f4f6;
+}
+
+.featured-project-image img {
+  object-fit: cover !important;
+  object-position: center !important;
+}
+
+/* Hero section image fixes */
+.hero-image {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.hero-image img {
+  object-fit: cover !important;
+  object-position: center !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Client logo fixes */
+.client-logo {
+  position: relative;
+  height: 3rem;
+  width: 8rem;
+  overflow: hidden;
+  background-color: #f9fafb;
+  border-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.client-logo img {
+  object-fit: contain !important;
+  object-position: center !important;
+  padding: 0.5rem;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Hero slider image fixes */
+.hero-slider-image {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-slider-image img {
+  object-fit: cover !important;
+  object-position: center !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Responsive image adjustments */
+@media (max-width: 768px) {
+  .project-card-image {
+    aspect-ratio: 16/9;
+  }
+  
+  .gallery-item {
+    aspect-ratio: 1/1;
+  }
+  
+  .featured-project-image {
+    aspect-ratio: 16/9;
+  }
+}
+
+/* Prevent image stretching on different screen sizes */
+@media (min-width: 1024px) {
+  .gallery-item {
+    aspect-ratio: 4/3;
+  }
+}
+
+/* Fix for Next.js Image component */
+img[data-nimg="fill"] {
+  object-fit: cover !important;
+  object-position: center !important;
+}
+
+img[data-nimg="responsive"] {
+  object-fit: cover !important;
+  object-position: center !important;
+}
+
+/* Ensure proper loading states */
+.image-loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Fix for image overlay issues */
+.image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  z-index: 1;
+}
+
+/* Ensure text over images is readable */
+.image-text {
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}

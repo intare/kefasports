@@ -14,8 +14,7 @@ interface GalleryItemProps {
 const GalleryItem: React.FC<GalleryItemProps> = ({
   imageUrl,
   title,
-  category,
-  projectUrl
+  projectUrl,
 }) => {
   const [imageSrc, setImageSrc] = useState(imageUrl);
   const [imageError, setImageError] = useState(false);

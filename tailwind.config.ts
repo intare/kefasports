@@ -19,10 +19,16 @@ const config: Config = {
           accent: "#17A2B8", // Chosen accent color
         },
       },
-      // Add custom fonts here if needed later
-      // fontFamily: {
-      //   sans: ["Inter", "sans-serif"], // Example
-      // },
+      fontFamily: {
+        sans: [
+          "var(--font-manrope)",
+          "system-ui",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "sans-serif",
+        ],
+      },
     },
   },
   plugins: [],

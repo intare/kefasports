@@ -19,15 +19,13 @@ export const useExitIntent = ({
   useEffect(() => {
     if (!enabled || hasTriggered) return;
 
-    let timeoutId: NodeJS.Timeout;
-
     // Activate exit intent detection after delay
-    timeoutId = setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       setIsActive(true);
     }, delay);
 
     return () => {
-      if (timeoutId) clearTimeout(timeoutId);
+      clearTimeout(timeoutId);
     };
   }, [enabled, hasTriggered, delay]);
 

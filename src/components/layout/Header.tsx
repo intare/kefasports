@@ -72,7 +72,7 @@ const Header: React.FC<HeaderProps> = ({ siteSettings }) => {
   ];
 
   // Prevent hydration mismatch by using consistent initial state
-  const headerClasses = `header-black bg-black shadow-sm sticky top-0 z-50 w-full transition-all duration-300 ${
+  const headerClasses = `header-black bg-black shadow-sm sticky top-0 z-50 w-full transition-all duration-300 overflow-hidden ${
     mounted && scrolled ? 'shadow-md' : ''
   }`;
 
@@ -84,12 +84,19 @@ const Header: React.FC<HeaderProps> = ({ siteSettings }) => {
         borderBottom: '1px solid #333'
       }}
     >
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <nav className="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 max-w-full">
         {/* Logo Placeholder */}
         <div className="flex-shrink-0">
           <Link href="/" className="text-2xl font-bold text-white">
             {/* Replace with SVG Logo Component later */}
-            <Image src="/logo-white.png" alt={siteSettings?.title || "KefaSports"} width={100} height={50} />
+            <Image
+              src="/logo-white.png"
+              alt={siteSettings?.title || "KefaSports"}
+              width={100}
+              height={50}
+              priority
+              style={{ width: 'auto', height: 'auto', maxHeight: '50px' }}
+            />
           </Link>
         </div>
 
@@ -135,7 +142,7 @@ const Header: React.FC<HeaderProps> = ({ siteSettings }) => {
         </div>
 
         {/* Mobile Menu Button */}
-        <div className="-mr-2 flex items-center sm:hidden">
+        <div className="flex items-center sm:hidden">
           <button
             type="button"
             onClick={(e) => {
@@ -184,13 +191,19 @@ const Header: React.FC<HeaderProps> = ({ siteSettings }) => {
 
           {/* Menu Panel */}
           <div
-            className="fixed top-0 right-0 h-full w-80 max-w-sm bg-white shadow-xl transform transition-transform duration-300 ease-in-out"
+            className="fixed top-0 right-0 h-full w-72 sm:w-80 max-w-[90vw] bg-white shadow-xl transform transition-transform duration-300 ease-in-out overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Menu Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-black">
               <Link href="/" className="flex items-center" onClick={() => setMobileMenuOpen(false)}>
-                <span className="text-2xl font-bold text-brand-dark">{siteSettings?.title || 'KefaSports'}</span>
+                <Image
+                  src="/logo-white.png"
+                  alt={siteSettings?.title || "KefaSports"}
+                  width={120}
+                  height={60}
+                  style={{ width: 'auto', height: 'auto', maxHeight: '50px' }}
+                />
               </Link>
               <button
                 onClick={() => setMobileMenuOpen(false)}
@@ -203,16 +216,20 @@ const Header: React.FC<HeaderProps> = ({ siteSettings }) => {
             </div>
 
             {/* Menu Items */}
-            <div className="px-6 py-4 space-y-1">
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="block px-4 py-3 text-base font-medium text-gray-700 hover:text-brand-accent hover:bg-gray-50 rounded-md transition-colors duration-200"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
+            <div className="px-6 py-4">
+              {navItems.map((item, index) => (
+                <div key={item.name}>
+                  <Link
+                    href={item.href}
+                    className="block px-4 py-4 text-base font-medium text-gray-700 hover:text-brand-accent hover:bg-gray-50 transition-colors duration-200"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                  {index < navItems.length - 1 && (
+                    <div className="border-b border-gray-200 my-1"></div>
+                  )}
+                </div>
               ))}
             </div>
 

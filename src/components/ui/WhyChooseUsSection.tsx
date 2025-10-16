@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 
 export interface WhyChooseUsItemProps {
   icon?: string;
@@ -80,7 +79,6 @@ const WhyChooseUsSection: React.FC<WhyChooseUsSectionProps> = ({
 };
 
 export default WhyChooseUsSection;
-
 
 
 

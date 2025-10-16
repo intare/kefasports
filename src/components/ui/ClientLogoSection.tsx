@@ -54,7 +54,7 @@ const ClientLogo: React.FC<ClientLogoProps> = ({
         </div>
 
         {/* Subtle glow effect on hover */}
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-brand-accent/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-brand-accent/5 to-[#f36c20]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
       </div>
     </div>
   );

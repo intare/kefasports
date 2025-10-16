@@ -3,6 +3,14 @@ import GalleryClient from '@/components/gallery/GalleryClient';
 import CTABlock from '@/components/ui/CTABlock';
 import { fetchSanityData, urlFor } from '@/lib/sanity';
 import { galleryQuery } from '@/lib/queries';
+import type { Project } from '@/types/sanity';
+
+type GalleryItem = {
+  imageUrl: string;
+  title: string;
+  category: string;
+  projectUrl?: string;
+};
 
 // Force dynamic rendering - fetch fresh data on every request
 export const dynamic = 'force-dynamic';
@@ -10,13 +18,16 @@ export const revalidate = 0;
 
 export default async function GalleryPage() {
   // Fetch all projects from Sanity for gallery display
-  const sanityProjects = await fetchSanityData(galleryQuery);
+  const sanityProjects = (await fetchSanityData<Project[]>(galleryQuery)) ?? [];
 
   // Transform and flatten gallery items from projects
-  const galleryItems = sanityProjects && sanityProjects.length > 0
-    ? sanityProjects.flatMap((project: any) => {
+  const galleryItems: GalleryItem[] = sanityProjects.length > 0
+    ? sanityProjects.flatMap((project) => {
         // Create an array of items from project's main image and additional images
-        const items = [];
+        const items: GalleryItem[] = [];
+        const projectSlug = project.slug?.current
+          ? `/projects/${project.slug.current}`
+          : undefined;
 
         // Add main image
         if (project.mainImage) {
@@ -24,18 +35,18 @@ export default async function GalleryPage() {
             imageUrl: urlFor(project.mainImage).width(800).height(600).url(),
             title: project.title,
             category: project.category || 'Uncategorized',
-            projectUrl: `/projects/${project.slug}`
+            projectUrl: projectSlug,
           });
         }
 
         // Add additional images from gallery
         if (project.images && project.images.length > 0) {
-          project.images.forEach((image: any, index: number) => {
+          project.images.forEach((image, index) => {
             items.push({
               imageUrl: urlFor(image).width(800).height(600).url(),
               title: `${project.title} - Image ${index + 2}`,
               category: project.category || 'Uncategorized',
-              projectUrl: `/projects/${project.slug}`
+              projectUrl: projectSlug,
             });
           });
         }

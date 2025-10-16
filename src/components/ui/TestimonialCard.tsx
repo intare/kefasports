@@ -26,7 +26,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
       
       {/* Quote Text */}
       <p className="text-brand-secondary mb-6 italic flex-grow">
-        "{quote}"
+        &ldquo;{quote}&rdquo;
       </p>
       
       {/* Author Info */}

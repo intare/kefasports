@@ -9,8 +9,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-manrope);
+  --font-mono: "ui-monospace", "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,14 +23,15 @@
 html {
   scroll-behavior: smooth;
   height: 100%;
+  overflow-x: hidden;
 }
 
 body {
-   background-color: #fff;
+  background-color: #fff;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   color: #171717;
-  font-family: 'Roboto',sans-serif;
+  font-family: var(--font-manrope), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-weight: 500;
   font-style: normal;
   font-size: 12px;
@@ -68,7 +69,7 @@ header {
 
 /* Hero Slider Styles */
 .full-width-animated-hero {
-    background-color: #f2efec;
+    background-color: transparent;
 }
 
 .full-width-animated-hero__container {
@@ -104,10 +105,10 @@ header {
 }
 
 .full-width-animated-hero__item {
-    background-color: #f2efec;
+    background-color: transparent;
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: 270px 1fr;
+    grid-template-rows: 380px 1fr;
 }
 
 @media only screen and (min-width: 1100px) {
@@ -123,7 +124,7 @@ header {
     display: flex;
     flex-direction: column;
     grid-column: 1 / span 12;
-    grid-row: 1;
+    grid-row: 2;
     justify-content: center;
     left: unset;
     padding: 32px 5%;
@@ -135,45 +136,14 @@ header {
 @media only screen and (min-width: 1100px) {
     .full-width-animated-hero__item-text {
         grid-column: 1 / span 4;
+        grid-row: 1;
         min-height: unset;
         min-width: 180px;
         padding: 0 48px 0 5vw;
     }
 }
 
-.full-width-animated-hero__item-text:before {
-    background: #2a73d9;
-    content: "";
-    height: 100%;
-    position: absolute;
-    right: 200%;
-    opacity: 0;
-    top: 0;
-    width: calc(100% + 50vw);
-    transition: background 0.75s cubic-bezier(0.19, 1, 0.22, 1),
-                opacity 0.75s cubic-bezier(0.19, 1, 0.22, 1),
-                right 1s cubic-bezier(0.19, 1, 0.22, 1);
-}
-
-.full-width-animated-hero__item-text.bg-darker-green:before {
-    background: #1a845c;
-}
-
-.full-width-animated-hero__item-text.bg-turmeric:before {
-    background: #f3be0a;
-}
-
-.full-width-animated-hero__item-text.bg-stantec-orange:before {
-    background: #ed6631;
-}
-
-.full-width-animated-hero__item-text.bg-himalayan-salt:before {
-    background: #f4b5b5;
-}
-
-.full-width-animated-hero__item-text.bg-black:before {
-    background: #000;
-}
+/* Removed - no separate background colors for text area */
 
 /* Animation States */
 .full-width-animated-hero__item--current {
@@ -182,11 +152,12 @@ header {
     z-index: 3;
 }
 
-.full-width-animated-hero__item--current .full-width-animated-hero__item-text::before {
+/* Removed ::before animation - no separate background colors */
+/* .full-width-animated-hero__item--current .full-width-animated-hero__item-text::before {
     opacity: 1;
     right: 0;
     transition-delay: 0.75s;
-}
+} */
 
 .full-width-animated-hero__item--current .full-width-animated-hero__description-link {
     opacity: 1;
@@ -208,7 +179,7 @@ header {
 .full-width-animated-hero__item-media-wrapper {
     border-radius: 0 0 80px 0;
     grid-column: 1 / span 12;
-    grid-row: 2;
+    grid-row: 1;
     overflow: hidden;
     position: relative;
     transform: translate(0, 0);
@@ -231,7 +202,7 @@ header {
 
 /* Typography */
 .full-width-animated-hero__eyebrow {
-    font-family: "Roboto", sans-serif;
+    font-family: var(--font-manrope), system-ui, sans-serif;
     font-size: 12px;
     font-weight: 700;
     line-height: 12px;
@@ -240,7 +211,7 @@ header {
 }
 
 .full-width-animated-hero__description {
-    font-family: "Source Serif 4", serif;
+    font-family: var(--font-manrope), system-ui, sans-serif;
     font-size: 24px;
     font-weight: 700;
     line-height: 26px;
@@ -267,7 +238,7 @@ header {
     text-decoration: none;
     text-transform: uppercase;
     transition: all 600ms ease;
-    font-family: "Roboto", sans-serif;
+    font-family: var(--font-manrope), system-ui, sans-serif;
     font-size: 14px;
     font-weight: 700;
     line-height: 14px;
@@ -279,4 +250,3 @@ header {
     background-color: #fff;
     color: #000;
 }
-

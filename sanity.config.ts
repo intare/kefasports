@@ -92,6 +92,21 @@ export default defineConfig({
                   .title('Statistics')
               ),
 
+            S.listItem()
+              .title('How We Work')
+              .child(
+                S.documentTypeList('howWeWorkItem')
+                  .title('How We Work Items')
+              ),
+
+            S.listItem()
+              .title('Services Hero')
+              .child(
+                S.document()
+                  .schemaType('servicesHero')
+                  .documentId('servicesHero')
+              ),
+
             S.divider(),
 
             // Supporting content

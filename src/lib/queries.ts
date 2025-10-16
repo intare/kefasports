@@ -25,7 +25,8 @@ export const homePageQuery = `{
     title,
     description,
     "slug": slug.current,
-    icon
+    icon,
+    mainImage
   },
   "featuredProjects": *[_type == "project" && featured == true] | order(_createdAt desc)[0...3] {
     _id,
@@ -53,6 +54,14 @@ export const homePageQuery = `{
     _id,
     name,
     logo
+  },
+  "howWeWorkItems": *[_type == "howWeWorkItem"] | order(order asc) {
+    _id,
+    title,
+    description,
+    image,
+    accordionItems,
+    order
   }
 }`;
 
@@ -209,4 +218,15 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0] {
   description,
   contactInfo,
   socialLinks
+}`;
+
+// Services hero query
+export const servicesHeroQuery = `*[_type == "servicesHero"][0] {
+  label,
+  mainHeading,
+  subHeading,
+  description,
+  heroImage,
+  ctaText,
+  ctaLink
 }`;

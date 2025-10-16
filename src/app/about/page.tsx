@@ -5,6 +5,56 @@ import SectionHeading from '@/components/ui/SectionHeading';
 import CTABlock from '@/components/ui/CTABlock';
 import { fetchSanityData, urlFor } from '@/lib/sanity';
 import { aboutPageQuery } from '@/lib/queries';
+import type { SanityImage, TeamMember as SanityTeamMember } from '@/types/sanity';
+
+type PortableTextSpan = {
+  _type: string;
+  text?: string;
+};
+
+type PortableTextBlock = {
+  _type: string;
+  _key?: string;
+  children?: PortableTextSpan[];
+};
+
+type AboutValue = {
+  title: string;
+  description: string;
+  icon?: string;
+};
+
+type AboutStat = {
+  number?: string | number;
+  label?: string;
+  description?: string;
+};
+
+type AboutStory = {
+  title?: string;
+  subtitle?: string;
+  content?: PortableTextBlock[];
+};
+
+type AboutContent = {
+  heroImage?: SanityImage;
+  title?: string;
+  subtitle?: string;
+  story?: AboutStory;
+  mission?: string;
+  vision?: string;
+  values?: AboutValue[];
+  stats?: AboutStat[];
+};
+
+type TeamMemberWithAccent = SanityTeamMember & {
+  accentColor?: string;
+};
+
+interface AboutPageQueryResult {
+  about?: AboutContent;
+  team?: TeamMemberWithAccent[];
+}
 
 // Force dynamic rendering - fetch fresh data on every request
 export const dynamic = 'force-dynamic';
@@ -12,11 +62,10 @@ export const revalidate = 0;
 
 export default async function AboutPage() {
   // Fetch about page data from Sanity
-  const data = await fetchSanityData(aboutPageQuery);
+  const data = await fetchSanityData<AboutPageQueryResult>(aboutPageQuery);
 
   const about = data?.about || null;
   const team = data?.team || [];
-  const whyChooseUs = data?.whyChooseUs || [];
 
   // Fallback data if Sanity is not available
   const fallbackTeamMembers = [
@@ -71,7 +120,7 @@ export default async function AboutPage() {
   ];
 
   // Transform team data or use fallback
-  const teamMembers = team.length > 0 ? team.map((member: any) => ({
+  const teamMembers = team.length > 0 ? team.map((member) => ({
     name: member.name,
     title: member.title,
     imageUrl: member.image ? urlFor(member.image).width(300).height(300).url() : '/team/placeholder.jpg',
@@ -126,11 +175,14 @@ export default async function AboutPage() {
 
               <div className="mt-6 space-y-6 text-brand-secondary">
                 {Array.isArray(storyContent) ? (
-                  storyContent.map((block: any, index: number) => (
-                    <p key={index}>
-                      {block.children?.map((child: any) => child.text).join('') || ''}
-                    </p>
-                  ))
+                  storyContent.map((block, index) => {
+                    const text = block.children?.map((child) => child.text ?? '').join('') ?? '';
+                    return (
+                      <p key={block._key ?? index}>
+                        {text}
+                      </p>
+                    );
+                  })
                 ) : (
                   <>
                     <p>KefaSports is a premier Sports facilities construction firm, founded in 2019 with a passionate team of young professionals and certified experts.</p>
@@ -188,7 +240,7 @@ export default async function AboutPage() {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-            {values.map((value: any, index: number) => (
+            {values.map((value, index) => (
               <div key={index} className="bg-white p-8 rounded-lg shadow-sm">
                 {value.icon && (
                   <div className="text-4xl mb-4">{value.icon}</div>
@@ -208,7 +260,7 @@ export default async function AboutPage() {
         <section className="py-16 px-4 sm:px-6 lg:px-8 bg-brand-dark text-white">
           <div className="container mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {about.stats.map((stat: any, index: number) => (
+              {about.stats.map((stat, index) => (
                 <div key={index} className="text-center">
                   <div className="text-4xl md:text-5xl font-bold text-brand-accent mb-2">
                     {stat.number}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -80,10 +80,9 @@ const HeroSlider: React.FC<HeroSliderProps> = ({ slides: providedSlides }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [slideState, setSlideState] = useState<'current' | 'prev' | 'next'>('current');
   const [mounted, setMounted] = useState(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<NodeJS.Timeout | null>(null);
+  const slideChangeRef = useRef<(direction: 1 | -1) => void>(() => {});
 
   // Touch gesture state
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -118,70 +117,82 @@ const HeroSlider: React.FC<HeroSliderProps> = ({ slides: providedSlides }) => {
     }
   };
 
-  const startProgressTimer = () => {
+  const restartTimer = useCallback(() => {
+    if (slides.length === 0) {
+      return;
+    }
+
     setProgress(0);
-    if (progressRef.current) clearInterval(progressRef.current);
+    if (progressRef.current) {
+      clearInterval(progressRef.current);
+    }
 
     progressRef.current = setInterval(() => {
-      setProgress(prev => {
+      setProgress((prev) => {
         if (prev >= 100) {
-          nextSlide();
+          slideChangeRef.current(1);
           return 0;
         }
-        return prev + (100 / (SLIDE_DURATION / PROGRESS_INTERVAL));
+        return Math.min(prev + (100 / (SLIDE_DURATION / PROGRESS_INTERVAL)), 100);
       });
     }, PROGRESS_INTERVAL);
-  };
+  }, [slides.length]);
 
-  const nextSlide = () => {
-    if (!isTransitioning) {
+  const changeSlide = useCallback(
+    (direction: 1 | -1) => {
+      if (isTransitioning || slides.length === 0) {
+        return;
+      }
+
       setIsTransitioning(true);
-      if (progressRef.current) clearInterval(progressRef.current);
-
-      // Start transition sequence
-      setSlideState('prev');
+      if (progressRef.current) {
+        clearInterval(progressRef.current);
+      }
 
       setTimeout(() => {
-        setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
-        setSlideState('current');
+        setCurrentSlide((prev) => {
+          if (slides.length === 0) {
+            return prev;
+          }
+          const nextIndex = (prev + direction + slides.length) % slides.length;
+          return nextIndex;
+        });
         setIsTransitioning(false);
-        startProgressTimer();
-      }, 1500); // Match CSS transition timing
-    }
-  };
+        restartTimer();
+      }, 1000);
+    },
+    [isTransitioning, restartTimer, slides.length],
+  );
 
-  const prevSlide = () => {
-    if (!isTransitioning) {
-      setIsTransitioning(true);
-      if (progressRef.current) clearInterval(progressRef.current);
+  useEffect(() => {
+    slideChangeRef.current = changeSlide;
+  }, [changeSlide]);
 
-      setSlideState('next');
+  const nextSlide = useCallback(() => {
+    changeSlide(1);
+  }, [changeSlide]);
 
-      setTimeout(() => {
-        setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
-        setSlideState('current');
-        setIsTransitioning(false);
-        startProgressTimer();
-      }, 1500);
-    }
-  };
+  const prevSlide = useCallback(() => {
+    changeSlide(-1);
+  }, [changeSlide]);
 
   // Initialize first slide
   useEffect(() => {
     setMounted(true);
 
     const timer = setTimeout(() => {
-      startProgressTimer();
+      restartTimer();
     }, 1000); // Initial delay to show first slide
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [restartTimer]);
 
   // Clean up intervals
   useEffect(() => {
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      if (progressRef.current) clearInterval(progressRef.current);
+      if (progressRef.current) {
+        clearInterval(progressRef.current);
+      }
     };
   }, []);
 
@@ -233,13 +244,13 @@ const HeroSlider: React.FC<HeroSliderProps> = ({ slides: providedSlides }) => {
   // Prevent hydration mismatch
   if (!mounted) {
     return (
-      <div className="full-width-animated-hero" style={{ backgroundColor: '#f2efec' }}>
+      <div className="full-width-animated-hero">
         <div className="full-width-animated-hero__container max-w-[1800px] mx-auto">
-          <div className="full-width-animated-hero__slider relative h-[600px] md:h-[700px]">
+          <div className="full-width-animated-hero__slider relative h-[600px] md:h-[700px]" style={{ backgroundColor: defaultSlides[0].backgroundColor }}>
             {/* Static first slide for SSR */}
             <div className="absolute inset-0">
               <div className="relative h-full w-full">
-                <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+                <div className="absolute inset-0 animate-pulse" style={{ backgroundColor: defaultSlides[0].backgroundColor }} />
               </div>
             </div>
           </div>
@@ -249,112 +260,113 @@ const HeroSlider: React.FC<HeroSliderProps> = ({ slides: providedSlides }) => {
   }
 
   return (
-    <div className="full-width-animated-hero" style={{ backgroundColor: '#f2efec' }}>
+    <div className="full-width-animated-hero border-b border-gray-300 shadow-sm">
       <div className="full-width-animated-hero__container max-w-[1800px] mx-auto">
         <div
           ref={sliderRef}
-          className="full-width-animated-hero__slider relative"
+          className="full-width-animated-hero__slider relative overflow-hidden"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          {/* Current Slide */}
-          <div className={`full-width-animated-hero__item full-width-animated-hero__item--${slideState} absolute inset-0 grid grid-cols-12 transition-opacity duration-1000 ${
-            slideState === 'current' ? 'opacity-100 z-30' : 'opacity-0 z-20'
-          }`}>
+          {/* Render all slides with proper layering */}
+          {slides.map((slide, index) => {
+            const isActive = index === currentSlide;
+            const slideVisibility = isActive ? 'opacity-100 z-30' : 'opacity-0 z-20 pointer-events-none';
 
-            {/* Text Content */}
-            <div className={`full-width-animated-hero__item-text ${slides[currentSlide].bgClass} relative col-span-12 lg:col-span-4 flex flex-col justify-center p-8 lg:p-16 transition-all duration-700`}>
-              <div className="full-width-animated-hero__description-link relative z-10">
-                <p className="full-width-animated-hero__eyebrow text-white text-xs font-bold tracking-wider mb-4 uppercase">
-                  {slides[currentSlide].category}
-                </p>
-                <h2 className="full-width-animated-hero__description text-white text-2xl lg:text-4xl font-bold leading-tight mb-8">
-                  {slides[currentSlide].title}
-                </h2>
-                <Link
-                  href={slides[currentSlide].buttonLink}
-                  className="full-width-animated-hero__cta inline-block bg-transparent border-2 border-white rounded-full text-white px-6 py-4 text-sm font-bold tracking-wider uppercase hover:bg-white hover:text-black transition-all duration-600"
-                >
-                  {slides[currentSlide].buttonText}
-                </Link>
-              </div>
-
-              {/* Background overlay that slides in */}
+            return (
               <div
-                className={`absolute inset-0 transition-all duration-1000 ${
-                  slideState === 'current' ? 'opacity-100 right-0' : 'opacity-0 right-[200%]'
-                }`}
-                style={{
-                  background: slides[currentSlide].backgroundColor,
-                  width: 'calc(100% + 50vw)'
-                }}
-              />
-            </div>
+                key={slide.id}
+                className={`full-width-animated-hero__item full-width-animated-hero__item--${isActive ? 'current' : 'hidden'} absolute inset-0 grid grid-cols-12 transition-opacity duration-1000 ${slideVisibility}`}
+                style={{ backgroundColor: slide.backgroundColor }}
+              >
+                {/* Text Content */}
+                <div className={`full-width-animated-hero__item-text relative col-span-12 lg:col-span-4 flex flex-col justify-center p-6 sm:p-8 lg:p-16 transition-all duration-1000 ${
+                  isActive ? 'translate-x-0 opacity-100' : 'translate-x-[-100%] opacity-0'
+                }`}>
+                  <div className="full-width-animated-hero__description-link relative z-10">
+                    <p className="full-width-animated-hero__eyebrow text-white text-xs font-bold tracking-wider mb-3 sm:mb-4 uppercase">
+                      {slide.category}
+                    </p>
+                    <h2 className="full-width-animated-hero__description text-white text-xl sm:text-2xl lg:text-4xl font-bold leading-tight mb-4 sm:mb-6 lg:mb-8">
+                      {slide.title}
+                    </h2>
+                    <Link
+                      href={slide.buttonLink}
+                      className="full-width-animated-hero__cta inline-block bg-transparent border-2 border-white rounded-full text-white px-5 py-3 sm:px-6 sm:py-4 text-xs sm:text-sm font-bold tracking-wider uppercase hover:bg-white hover:text-black transition-all duration-600 touch-manipulation"
+                    >
+                      {slide.buttonText}
+                    </Link>
+                  </div>
+                </div>
 
-            {/* Image */}
-            <div className="full-width-animated-hero__item-media-wrapper col-span-12 lg:col-span-8 relative overflow-hidden rounded-bl-[80px] lg:rounded-bl-[160px] bg-gray-200">
-              <Image
-                src={slides[currentSlide].image}
-                alt={slides[currentSlide].title}
-                fill
-                className="full-width-animated-hero__item-media object-cover object-center transition-all duration-1000"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  if (target.src !== '/gallery/court1.jpg') {
-                    target.src = '/gallery/court1.jpg';
-                  }
-                }}
-                style={{ objectFit: 'cover', objectPosition: 'center' }}
-                priority
-              />
-            </div>
-          </div>
+                {/* Image */}
+                <div className={`full-width-animated-hero__item-media-wrapper col-span-12 lg:col-span-8 relative overflow-hidden rounded-bl-[80px] lg:rounded-bl-[160px] transition-all duration-1000 ${
+                  isActive ? 'translate-x-0 opacity-100' : 'translate-x-[100%] opacity-0'
+                }`}>
+                  <Image
+                    src={slide.image}
+                    alt={slide.title}
+                    fill
+                    className="full-width-animated-hero__item-media object-cover object-center"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      if (target.src !== '/gallery/court1.jpg') {
+                        target.src = '/gallery/court1.jpg';
+                      }
+                    }}
+                    style={{ objectFit: 'cover', objectPosition: 'center' }}
+                    priority={index === 0}
+                  />
+                </div>
+              </div>
+            );
+          })}
         </div>
 
         {/* Controls */}
-        <div className="full-width-animated-hero__controls flex justify-between items-center p-4">
+        <div className="full-width-animated-hero__controls flex justify-between items-center p-3 sm:p-4">
           {/* Progress Counter */}
-          <div className="full-width-animated-hero__progress flex items-center gap-2">
-            <span className="full-width-animated-hero__progress-current text-black text-lg font-bold">
+          <div className="full-width-animated-hero__progress flex items-center gap-1.5 sm:gap-2">
+            <span className="full-width-animated-hero__progress-current text-black text-base sm:text-lg font-bold">
               {formatSlideNumber(currentSlide + 1)}
             </span>
-            <hr className="full-width-animated-hero__progress-separator w-24 h-px bg-gray-400 border-0" />
-            <span className="full-width-animated-hero__progress-total text-gray-400 text-lg font-bold">
+            <hr className="full-width-animated-hero__progress-separator w-16 sm:w-24 h-px bg-gray-400 border-0" />
+            <span className="full-width-animated-hero__progress-total text-gray-400 text-base sm:text-lg font-bold">
               {formatSlideNumber(slides.length)}
             </span>
           </div>
 
           {/* Navigation Buttons */}
-          <div className="full-width-animated-hero__btn-wrapper flex gap-3">
+          <div className="full-width-animated-hero__btn-wrapper flex gap-2 sm:gap-3">
             <button
               onClick={prevSlide}
-              className="full-width-animated-hero__btn full-width-animated-hero__btn--prev relative w-10 h-10 md:w-15 md:h-15 bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-orange-500 transition-colors duration-300"
+              className="full-width-animated-hero__btn full-width-animated-hero__btn--prev relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-orange-500 transition-colors duration-300 touch-manipulation active:scale-95"
               aria-label="Previous slide"
               disabled={isTransitioning}
             >
               <span className="full-width-animated-hero__btn-span w-full h-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
                 </svg>
               </span>
             </button>
 
-            <div className="full-width-animated-hero__timeout-indicator relative w-10 h-10 md:w-15 md:h-15">
+            <div className="full-width-animated-hero__timeout-indicator relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16">
               <button
                 onClick={nextSlide}
-                className="full-width-animated-hero__btn full-width-animated-hero__btn--next w-full h-full bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-orange-500 transition-colors duration-300 relative z-10"
+                className="full-width-animated-hero__btn full-width-animated-hero__btn--next w-full h-full bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-orange-500 transition-colors duration-300 relative z-10 touch-manipulation active:scale-95"
                 aria-label="Next slide"
                 disabled={isTransitioning}
               >
                 <span className="full-width-animated-hero__btn-span w-full h-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
                   </svg>
                 </span>
               </button>
               <div className="absolute inset-0 z-0">
-                <CircularProgress progress={progress} size={40} />
+                <CircularProgress progress={progress} size={48} />
               </div>
             </div>
           </div>
@@ -365,4 +377,9 @@ const HeroSlider: React.FC<HeroSliderProps> = ({ slides: providedSlides }) => {
 };
 
 export default HeroSlider;
+
+
+
+
+
 

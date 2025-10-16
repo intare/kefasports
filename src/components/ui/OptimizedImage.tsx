@@ -153,7 +153,6 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
   const imageProps = {
     src: getBestImageSrc(),
-    alt,
     className: `transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`,
     onLoad: handleImageLoad,
     onError: handleImageError,
@@ -171,7 +170,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   return (
     <div ref={imgRef} className="relative">
       {!isLoaded && <LoadingSkeleton />}
-      <Image {...imageProps} />
+      <Image {...imageProps} alt={alt} />
     </div>
   );
 };

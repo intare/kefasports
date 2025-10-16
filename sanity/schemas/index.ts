@@ -10,6 +10,8 @@ import about from './about'
 import heroSlide from './heroSlide'
 import statistic from './statistic'
 import seoMetadata from './seoMetadata'
+import howWeWorkItem from './howWeWorkItem'
+import servicesHero from './servicesHero'
 
 export const schemaTypes = [
   // Main content types
@@ -24,6 +26,8 @@ export const schemaTypes = [
   whyChooseUsItem,
   heroSlide,
   statistic,
+  howWeWorkItem,
+  servicesHero,
 
   // Site configuration
   siteSettings,

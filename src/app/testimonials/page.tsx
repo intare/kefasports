@@ -4,6 +4,15 @@ import TestimonialCard from '@/components/ui/TestimonialCard';
 import CTABlock from '@/components/ui/CTABlock';
 import { fetchSanityData, urlFor } from '@/lib/sanity';
 import { testimonialsQuery } from '@/lib/queries';
+import type { Testimonial } from '@/types/sanity';
+
+type TestimonialDisplay = {
+  quote: string;
+  author: string;
+  title?: string;
+  company?: string;
+  imageUrl: string;
+};
 
 // Force dynamic rendering - fetch fresh data on every request
 export const dynamic = 'force-dynamic';
@@ -11,16 +20,18 @@ export const revalidate = 0;
 
 export default async function TestimonialsPage() {
   // Fetch testimonials from Sanity
-  const sanityTestimonials = await fetchSanityData(testimonialsQuery);
+  const sanityTestimonials = (await fetchSanityData<Testimonial[]>(testimonialsQuery)) ?? [];
 
   // Transform testimonials data
-  const testimonials = sanityTestimonials && sanityTestimonials.length > 0
-    ? sanityTestimonials.map((testimonial: any) => ({
+  const testimonials: TestimonialDisplay[] = sanityTestimonials.length > 0
+    ? sanityTestimonials.map((testimonial) => ({
         quote: testimonial.quote,
         author: testimonial.author,
         title: testimonial.title,
         company: testimonial.company,
-        imageUrl: testimonial.image ? urlFor(testimonial.image).width(150).height(150).url() : '/images/placeholder-testimonial-1.jpg'
+        imageUrl: testimonial.image
+          ? urlFor(testimonial.image).width(150).height(150).url()
+          : '/images/placeholder-testimonial-1.jpg',
       }))
     : [
         {
@@ -90,7 +101,7 @@ export default async function TestimonialsPage() {
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
-              {otherTestimonials.map((testimonial: any, index: number) => (
+              {otherTestimonials.map((testimonial, index) => (
                 <TestimonialCard
                   key={index}
                   quote={testimonial.quote}

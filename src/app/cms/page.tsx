@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
+import Link from 'next/link'
 
 export default function CMSLoginPage() {
   const router = useRouter()
@@ -44,6 +44,7 @@ export default function CMSLoginPage() {
       // Sanity handles its own authentication
       router.push('/studio')
     } catch (err) {
+      console.error('CMS authentication redirect failed:', err)
       setError('Authentication failed. Please try again.')
       setIsLoading(false)
     }
@@ -128,7 +129,7 @@ export default function CMSLoginPage() {
                 autoComplete="current-password"
                 required
                 className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-brand-dark rounded-md focus:outline-none focus:ring-brand-accent focus:border-brand-accent focus:z-10 sm:text-sm"
-                placeholder="••••••••"
+                placeholder="********"
                 value={credentials.password}
                 onChange={(e) =>
                   setCredentials({ ...credentials, password: e.target.value })
@@ -242,15 +243,17 @@ export default function CMSLoginPage() {
             Protected by Sanity Authentication
           </p>
           <div className="mt-2">
-            <a
+                        <Link
               href="/"
               className="text-sm text-brand-accent hover:text-white transition-colors"
             >
-              ← Back to Website
-            </a>
+              Back to Website
+            </Link>
           </div>
         </div>
       </div>
     </div>
   )
 }
+
+

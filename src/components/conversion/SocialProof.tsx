@@ -49,7 +49,7 @@ const SocialProof: React.FC<SocialProofProps> = ({
 
   if (variant === 'floating') {
     return (
-      <div className={`fixed bottom-6 left-6 z-40 ${className}`}>
+      <div className={`hidden lg:block fixed bottom-6 left-6 z-40 ${className}`}>
         <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-4 max-w-xs transform transition-all duration-500 hover:scale-105">
           <div className="flex items-center space-x-3">
             <div className="text-2xl">{stats[currentStat].icon}</div>
@@ -87,9 +87,9 @@ const SocialProof: React.FC<SocialProofProps> = ({
     );
   }
 
-  // Banner variant (default)
+  // Banner variant (default) - Hidden on mobile to prevent overlap
   return (
-    <div className={`bg-brand-accent text-white py-3 ${className}`}>
+    <div className={`hidden md:block bg-brand-accent text-white py-3 ${className}`}>
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-center space-y-2 md:space-y-0 md:space-x-8 text-center">
           <div className="flex items-center space-x-2">
@@ -106,8 +106,8 @@ const SocialProof: React.FC<SocialProofProps> = ({
           </div>
           <div className="flex items-center space-x-2">
             <span className="text-lg">📞</span>
-            <a 
-              href="tel:+250787666677" 
+            <a
+              href="tel:+250787666677"
               className="font-semibold hover:text-yellow-200 transition-colors"
             >
               +250 787 666 677

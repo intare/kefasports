@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Manrope } from "next/font/google";
 import "./globals.css";
 import "../styles/animations.css";
 import Header from "@/components/layout/Header";
@@ -12,7 +12,11 @@ import ClientOnly from "@/components/ui/ClientOnly";
 import { fetchSanityData } from "@/lib/sanity";
 import { siteSettingsQuery } from "@/lib/queries";
 
-const inter = Inter({ subsets: ["latin"] });
+const manrope = Manrope({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-manrope",
+});
 
 export const metadata: Metadata = {
   title: "KefaSports - Premier Sports Facility Construction",
@@ -31,8 +35,8 @@ export default async function RootLayout({
   const siteSettings = await fetchSanityData(siteSettingsQuery);
 
   return (
-    <html lang="en">
-      <body className={`${inter.className} bg-brand-white text-brand-secondary`}>
+    <html lang="en" className={manrope.variable}>
+      <body className={`${manrope.className} bg-brand-white text-brand-secondary`}>
         {/* Google Analytics - Replace with your actual GA4 Measurement ID */}
         <ClientOnly>
           <GoogleAnalytics measurementId="G-XXXXXXXXXX" />

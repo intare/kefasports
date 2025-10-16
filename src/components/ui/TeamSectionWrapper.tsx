@@ -4,39 +4,45 @@ import React, { useEffect, useState } from 'react';
 import LeadershipTeamSection from './LeadershipTeamSection';
 import { fetchSanityData } from '@/lib/sanity';
 import { teamMembersQuery } from '@/lib/queries';
+import type { TeamMember as SanityTeamMember, SanityImage } from '@/types/sanity';
 
-interface TeamMember {
-  _id: string;
+type TeamMemberWithAccent = SanityTeamMember & {
+  accentColor?: string;
+};
+
+type TeamMemberDisplay = {
   name: string;
   title: string;
-  image: any;
+  imageUrl: string | SanityImage | null;
   accentColor?: string;
-}
+  bio?: string;
+};
 
 interface TeamSectionWrapperProps {
   headline?: string;
-  fallbackTeamMembers: any[];
+  fallbackTeamMembers: TeamMemberDisplay[];
 }
 
 const TeamSectionWrapper: React.FC<TeamSectionWrapperProps> = ({ 
   headline = "Our Leadership Team",
   fallbackTeamMembers 
 }) => {
-  const [teamMembers, setTeamMembers] = useState(fallbackTeamMembers);
+  const [teamMembers, setTeamMembers] = useState<TeamMemberDisplay[]>(fallbackTeamMembers);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchTeamData = async () => {
       try {
-        const data = await fetchSanityData(teamMembersQuery);
+        const data = await fetchSanityData<TeamMemberWithAccent[]>(teamMembersQuery);
         
         if (data && data.length > 0) {
-          const transformedData = data.map((member: TeamMember) => ({
+          const transformedData: TeamMemberDisplay[] = data.map((member) => ({
             name: member.name,
             title: member.title,
-            imageUrl: member.image,
-            accentColor: member.accentColor || "#e74c3c"
+            imageUrl: member.image ?? null,
+            accentColor: member.accentColor || "#e74c3c",
+            bio: member.bio,
           }));
           setTeamMembers(transformedData);
         }
